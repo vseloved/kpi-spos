@@ -29,7 +29,7 @@
   (let (cur)
     (with-open-file (in (merge-pathnames "quests.txt" *load-truename*)
                         :external-format :utf-8)
-      (loop :for line := (read-line ,in nil nil) :while ,line :do
+      (loop :for line := (read-line in nil nil) :while line :do
          (if (or (blankp line)
                  (member (char line 0) '(#\Space #\Tab #\#)))
              (progn
