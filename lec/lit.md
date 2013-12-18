@@ -1,0 +1,8 @@
+- Шеховцов В.А. - Операційні системи
+- [Валерій Габрусєв, В. Лапінський, О. Нестеренко - Основи операційних систем. Ядро, процес, потік.](http://www.bohdan-books.com/catalog/book_104_1440/)
+- Э. Таненбаум - Операционные системы: Разработка и реализация
+- [Основы ОС](http://www.intuit.ru/department/os/osintro/)
+- [Основы ОС, практикум](http://www.intuit.ru/department/os/osintropractice/)
+- Silberschatz, Galvin, Gagne - Operating Systems Concepts with Java
+- [Operating Systems Course in MIT](http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-828-operating-system-engineering-fall-2006/)
+- [Advanced Linux Programming](http://www.advancedlinuxprogramming.com/alp-folder/)

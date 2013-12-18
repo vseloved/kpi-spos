@@ -1,0 +1,8 @@
+*~
+*.fasl
+\#*
+.\#*
+.*
+!.gitignore
+lec/*/*.pdf
+lab/*/*.pdf
