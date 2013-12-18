@@ -2,6 +2,7 @@
 (ql:quickload '#:hunchentoot)
 (ql:quickload '#:named-readtables)
 (ql:quickload '#:swank)
+(ql:quickload '#:cl-ppcre)
 
 (cl:rename-package "CL-PPCRE" "CL-PPCRE" '("PPCRE" "RE"))
 (cl:rename-package "HUNCHENTOOT" "HUNCHENTOOT" '("TBNL" "HTT"))
@@ -25,7 +26,7 @@
            #:parse-url-template))
 
 (in-package #:hunch)
-(named-readtables:in-readtable rutils.readtable:rutils-readtable)
+(named-readtables:in-readtable rutils-readtable)
 
 
 ;;; config
