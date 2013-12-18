@@ -1,1 +1,1 @@
-web: LC_CTYPE=UTF-8 ASDF_OUTPUT_TRANSLATIONS=$CACHE_DIR: ./sbcl/sbcl-1.0.54-x86-64-linux/run-sbcl.sh --load quicklisp/setup.lisp --load hunch.lisp -- -port $PORT -script exam/exam.lisp -swank-port 6006
+web: LC_CTYPE=UTF-8 ASDF_OUTPUT_TRANSLATIONS='(:output-translations (t $CACHE_DIR))' ./sbcl/sbcl-1.0.54-x86-64-linux/run-sbcl.sh --load quicklisp/setup.lisp --load hunch.lisp -- -port $PORT -script exam/exam.lisp -swank-port 6006
