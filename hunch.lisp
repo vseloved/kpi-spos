@@ -129,7 +129,7 @@
    (like |/foo| for url '/foo'). If the URL contains parameter names
    (basically keywords, like in '/foo/:bar/baz' bar will be a pramneter name)
    they may be referenced in easy-handler url parameters."
-  (with-gensyms (params-extractor req url parts cur pos end)
+  (with-gensyms (req url parts cur pos end)
     (let ((url-parts (parse-url-template url-template)))
       `(htt:define-easy-handler
            (,(mksym url-template :format "handle-~A")
