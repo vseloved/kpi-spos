@@ -8,7 +8,7 @@
 
 
 (defpackage #:hunch
-  (:use #:cl #:rutil #:named-readtables)
+  (:use #:cl #:rutil)
   (:import-from #:hunchentoot #:acceptor-log-message)
   (:export #:*hunch-acceptor*
            #:*port*
@@ -25,7 +25,7 @@
            #:parse-url-template))
 
 (in-package #:hunch)
-(in-readtable rutils-readtable)
+(named-readtables:in-readtable rutils.readtable:rutils-readtable)
 
 
 ;;; config
