@@ -1,8 +1,8 @@
+(ql:quickload '#:cl-ppcre)
 (ql:quickload '#:rutils)
 (ql:quickload '#:hunchentoot)
 (ql:quickload '#:named-readtables)
 (ql:quickload '#:swank)
-(ql:quickload '#:cl-ppcre)
 
 (cl:rename-package "CL-PPCRE" "CL-PPCRE" '("PPCRE" "RE"))
 (cl:rename-package "HUNCHENTOOT" "HUNCHENTOOT" '("TBNL" "HTT"))
