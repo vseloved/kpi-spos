@@ -6,8 +6,7 @@
 (use-package :hunchentoot)
 (use-package :hunch)
 
-(setf sb-impl::*default-external-format*
-      (flex:make-external-format :utf-8 :eol-style :lf))
+(eval-always (setf sb-impl::*default-external-format* :utf-8))
 
 (defmacro void (place)
   "Nullify PLACE."
