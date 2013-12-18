@@ -6,8 +6,6 @@
 (use-package :hunchentoot)
 (use-package :hunch)
 
-(eval-always (setf sb-impl::*default-external-format* :utf-8))
-
 (defmacro void (place)
   "Nullify PLACE."
   `(setf ,place nil))
@@ -29,21 +27,23 @@
 
 (eval-always
   (let (cur)
-    (dolines (line (merge-pathnames "quests.txt" *load-truename*))
-      (if (or (blankp line)
-              (member (char line 0) '(#\Space #\Tab #\#)))
-          (progn
-            (when (and (not (blankp line))
-                       (char= (char line 0) #\#))
-              (push (length *questions*) *topics*))
-            (when cur
-              (vector-push-extend cur *questions*)
-              (void cur)))
-          (if cur
-              (push line (quest-answers cur))
-              (setf cur (make-quest :text line)))))
-    (vector-push-extend cur *questions*)
-    (reversef *topics*)))
+    (with-open-file (in (merge-pathnames "quests.txt" *load-truename*)
+                        :external-format :utf-8)
+      (loop :for line := (read-line ,in nil nil) :while ,line :do
+         (if (or (blankp line)
+                 (member (char line 0) '(#\Space #\Tab #\#)))
+             (progn
+               (when (and (not (blankp line))
+                          (char= (char line 0) #\#))
+                 (push (length *questions*) *topics*))
+               (when cur
+                 (vector-push-extend cur *questions*)
+                 (void cur)))
+             (if cur
+                 (push line (quest-answers cur))
+                 (setf cur (make-quest :text line)))))
+      (vector-push-extend cur *questions*)
+      (reversef *topics*))))
 
 (defun generate-quests (&optional (n 10))
   (loop :for (beg end) :on *topics* :repeat n
