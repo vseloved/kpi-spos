@@ -169,3 +169,4 @@
 ;;; startup
 
 (start-web)
+(loop (sleep 1000))
