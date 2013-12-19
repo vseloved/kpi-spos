@@ -15,7 +15,6 @@
 (ql:quickload :cl-ppcre)
 (ql:quickload :hunchentoot)
 (ql:quickload :rutils)
-(ql:quickload :swank)
 (ql:quickload :named-readtables)
 (ql:quickload :cl-who)
 (ql:quickload :md5)

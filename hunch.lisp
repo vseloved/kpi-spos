@@ -2,7 +2,7 @@
 (ql:quickload '#:rutils)
 (ql:quickload '#:hunchentoot)
 (ql:quickload '#:named-readtables)
-(ql:quickload '#:swank)
+;(ql:quickload '#:swank)
 
 (cl:rename-package "CL-PPCRE" "CL-PPCRE" '("PPCRE" "RE"))
 (cl:rename-package "HUNCHENTOOT" "HUNCHENTOOT" '("TBNL" "HTT"))
@@ -20,8 +20,6 @@
            #:start-web
            #:restart-web
            #:stop-web
-           #:start-swank
-           #:stop-swank
            #:argv
            #:parse-url-template))
 
@@ -40,8 +38,6 @@
   "Hunch acceptor.")
 (defvar *port* 8080
   "Port at which the application will be started.")
-(defvar *swank-port* nil
-  "Port for starting swank. If nil swank won't be started.")
 (defvar *script* nil
   "Script file to load.")
 (defvar *debug* nil
@@ -84,22 +80,6 @@
   (stop-web)
   (sleep 0.1)
   (start-web port))
-
-
-;;; swank
-
-(defun start-swank (&optional port)
-  (when-it (or port *swank-port*)
-    (let ((*debug-io* (make-broadcast-stream)))
-      (swank:create-server :port it
-                           :dont-close t)
-      (acceptor-log-message *hunch-acceptor* :info
-                            "Started swank at port: ~A." it))))
-
-(defun stop-swank (&optional port)
-  (when-it (or port *swank-port*)
-    (swank:stop-server it)
-    (acceptor-log-message *hunch-acceptor* :info "Stopped swank at port: ~A." it)))
 
 
 ;;; URL routing
