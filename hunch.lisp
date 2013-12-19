@@ -176,4 +176,4 @@
 
 ;;; main
 
-(load *script*)
+(load *script* :external-format :utf-8)

@@ -8,8 +8,8 @@
 
 (setf sb-impl::*default-external-format* :utf-8)
 
-(format t "!!! ASDF version: ~A~%" (asdf:asdf-version))
-(format t "!!! SBCL encoding: ~A~%" sb-impl::*default-external-format*)
+(format t "~&!!! ASDF version: ~A" (asdf:asdf-version))
+(format t "~&!!! SBCL encoding: ~A" sb-impl::*default-external-format*)
 
 (require-quicklisp)
 (ql:quickload :cl-ppcre)
