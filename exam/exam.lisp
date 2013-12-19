@@ -169,4 +169,3 @@
 ;;; startup
 
 (start-web)
-(start-swank)
