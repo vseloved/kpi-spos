@@ -66,7 +66,7 @@
 (defvar *tries* (make-hash-table :test 'equalp))
 
 (defstruct try
-  id ts quests qas)
+  id ts time quests qas)
 
 (defun grade-try (try)
   (ceiling (* (/ 40 (length (try-quests try)))
@@ -136,8 +136,9 @@
              (who:htm
               :br
               (:div :class "center" :style "font-size: 20px;"
-                    (:div (who:fmt "[~A] Результат ~A: ~A балів."
-                                   (try-ts try) (try-id try) (grade-try try)))
+                    (:div (who:fmt "[~A] ~A сек. Результат ~A: ~A балів."
+                                   (try-ts try) (try-time try)
+                                   (try-id try) (grade-try try)))
                     (:ol (who:str (try-quest-grades try))))))))))))
 
 
@@ -157,7 +158,8 @@
                             (md5:md5sum-string
                              (strcat id (princ-to-string (local-time:now))))
                             :key #'code-char))))
-       (set# token *tries* (make-try :id id :quests (generate-quests)))
+       (set# token *tries* (make-try :id id :quests (generate-quests)
+                                     :time (get-universal-time)))
        (set-cookie "tok" :path "/" :value token)
        (redirect "/q")))))
 
@@ -175,8 +177,11 @@
                           (try-qas it))
                     (void (elt qs quest-pos))
                     (if (= quest-pos (1- (length qs)))
-                        (progn (setf (try-ts it) (local-time:now))
-                               (redirect "/rez"))
+                        (progn
+                          (setf (try-time it) (- (get-universal-time)
+                                                 (try-time it))
+                                (try-ts it) (local-time:now))
+                          (redirect "/rez"))
                         (redirect "/q")))))
          (redirect "/")))
 
