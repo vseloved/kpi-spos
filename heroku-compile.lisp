@@ -6,7 +6,7 @@
 ;; (asdf:initialize-output-translations
 ;;  `(:output-translations (T ,(sb-ext:posix-getenv "CACHE_DIR"))))
 
-(format t "       -----> ASDF version: ~A" asdf:*asdf-version*)
+(format t "       -----> ASDF version: ~A" (asdf:asdf-version))
 
 (require-quicklisp)
 (ql:quickload :cl-ppcre)
