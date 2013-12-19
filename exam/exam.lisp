@@ -19,6 +19,7 @@
   "A shortcut to make a pair of X and Y."
   (make-pair :lt x :rt y))
 
+
 ;;; Questions
 
 (defstruct quest
@@ -62,6 +63,10 @@
 
 ;;; Web controller
 
+(defvar *auth-data* (make-hash-table :test 'equal))
+(dolines (line (merge-pathnames "auth.txt" *load-truename*))
+  (apply #`(set# % *auth-data* %%) (split #\Space line)))
+
 (defvar *tries* (make-hash-table :test 'equalp))
 (defvar *results* ())
 
@@ -102,10 +107,15 @@
          (redirect "/")))
 
 (url "/rez/:tid" (tid)
-  (if-it (or (get# tid *tries*)
-             (get# (cookie-in "tok") *tries*))
-         (result-page it)
-         (redirect "/")))
+  (if (string= all tid)
+      (mv-bind (user pass) (htt:authorization)
+        (if (string= pass (get# user *auth-data*))
+            (result-page)
+            (htt:require-authorization)))
+      (if-it (or (get# tid *tries*)
+                 (get# (cookie-in "tok") *tries*))
+             (result-page it)
+             (redirect "/"))))
 
 
 ;;; Pages
@@ -169,4 +179,3 @@
 ;;; startup
 
 (start-web)
-(loop (sleep 1000))
