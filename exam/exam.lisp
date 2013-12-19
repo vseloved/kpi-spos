@@ -50,7 +50,7 @@
   (loop :for (beg end) :on *topics* :repeat n
      :nconc (coerce (sub (shuffle (sub *questions* beg end)) 0 2) 'list)))
 
-(defun grade (qa)
+(defun grade-qa (qa)
   (let ((score 0))
     (dolist (a (quest-answers (lt qa)))
       (when (and (find (sub a 2) (rt qa) :test 'string=)
@@ -61,61 +61,16 @@
                                  (quest-answers (lt qa))))))))
 
 
-;;; Web controller
-
-(defvar *auth-data* (make-hash-table :test 'equal))
-(dolines (line (merge-pathnames "auth.txt" *load-truename*))
-  (apply #`(set# % *auth-data* %%) (split #\Space line)))
+;;; Tries
 
 (defvar *tries* (make-hash-table :test 'equalp))
-(defvar *results* ())
 
 (defstruct try
-  id quests qas)
+  id ts quests qas)
 
-(url "/" ()
-  (ecase (request-method*)
-    (:GET (login-page))
-    (:POST
-     (let* ((id (post-parameter "id"))
-            (token (base64:string-to-base64-string
-                    (reduce #'strcat
-                            (md5:md5sum-string
-                             (strcat id (princ-to-string (local-time:now))))
-                            :key #'code-char))))
-       (set# token *tries* (make-try :id id :quests (generate-quests)))
-       (set-cookie "tok" :path "/" :value token)
-       (redirect "/q")))))
-
-(url "/q" ()
-  (if-it (get# (cookie-in "tok") *tries*)
-         (let* ((qs (try-quests it))
-                (quest-pos (position-if-not 'null qs))
-                (quest (elt qs quest-pos)))
-           (ecase (request-method*)
-             (:GET (quest-page quest-pos quest))
-             (:POST (push (pair quest
-                                (mapcar #'cdr (remove-if-not
-                                               #`(string= "answers" (car %))
-                                               (post-parameters*))))
-                          (try-qas it))
-                    (void (elt qs quest-pos))
-                    (if (= quest-pos (1- (length qs)))
-                        (progn (push (pair it (local-time:now)) *results*)
-                               (redirect "/rez"))
-                        (redirect "/q")))))
-         (redirect "/")))
-
-(url "/rez/:tid" (tid)
-  (if (string= all tid)
-      (mv-bind (user pass) (htt:authorization)
-        (if (string= pass (get# user *auth-data*))
-            (result-page)
-            (htt:require-authorization)))
-      (if-it (or (get# tid *tries*)
-                 (get# (cookie-in "tok") *tries*))
-             (result-page it)
-             (redirect "/"))))
+(defun grade-try (try)
+  (ceiling (* (/ 40 (length (try-quests try)))
+              (reduce #'+ (mapcar #'grade-qa (try-qas try))))))
 
 
 ;;; Pages
@@ -149,32 +104,93 @@
              (:label (who:fmt (quest-text quest)))
              (:input :name "qid" :type "hidden" :value qid)
              :br
-             (dolist (answer (quest-answers quest))
+             (dolist (answer (shuffle (quest-answers quest)))
                (who:htm (:input :name "answers" :type "checkbox"
                                 :value (sub answer 2)
                                 (who:str (sub answer 2))) :br))
              (:input :type "submit" :value "Відправити"))))))
 
-(defun result-page (try)
-  (let ((coef (/ 40 (length (try-quests try)))))
-    (who:with-html-output-to-string (out)
-      (:html
-       (:head
-        (:title "Результат")
-        (:style +center-style+))
-       (:body
-        (:div :class "center" :style "font-size: 20px;"
-              (:div (who:fmt "Ваш результат: ~A балів."
-                             (ceiling (* coef
-                                         (reduce #'+ (mapcar #'grade
-                                                             (try-qas try)))))))
-              (:ol
-               (dolist (qa (try-qas try))
-                 (who:htm (:li (who:fmt "~A - ~A"
-                                        (substr (quest-text (lt qa)) 0 -1)
-                                        (grade qa))))))))))))
+(defun try-quest-grades (try)
+  (who:with-html-output-to-string (out)
+    (dolist (qa (reverse (try-qas try)))
+      (who:htm (:li (who:fmt "~A - ~A"
+                             (substr (quest-text (lt qa)) 0 -1)
+                             (grade-qa qa)))))))
 
-(setf htt:*header-stream* *standard-output*)
+(defun result-page (&optional try)
+  (who:with-html-output-to-string (out)
+    (:html
+     (:head
+      (:title "Результат")
+      (:style +center-style+))
+     (:body
+      (if try
+          (who:htm
+           (:div :class "center" :style "font-size: 20px;"
+                 (:div (who:fmt "Ваш результат: ~A балів."
+                                (grade-try try)))
+                 (:ol (who:str (try-quest-grades try)))))
+          (who:htm
+           (:p (who:fmt "Всего результатов: ~A" (ht-count *tries*)))
+           (dotable (_ try *tries*)
+             (who:htm
+              :br
+              (:div :class "center" :style "font-size: 20px;"
+                    (:div (who:fmt "[~A] Результат ~A: ~A балів."
+                                   (try-ts try) (try-id try) (grade-try try)))
+                    (:ol (who:str (try-quest-grades try))))))))))))
+
+
+;;; Web controller
+
+(defvar *auth-data* (make-hash-table :test 'equal))
+(dolines (line (merge-pathnames "auth.txt" *load-truename*))
+  (apply #`(set# % *auth-data* %%) (split #\Space line)))
+
+(url "/" ()
+  (ecase (request-method*)
+    (:GET (login-page))
+    (:POST
+     (let* ((id (post-parameter "id"))
+            (token (base64:string-to-base64-string
+                    (reduce #'strcat
+                            (md5:md5sum-string
+                             (strcat id (princ-to-string (local-time:now))))
+                            :key #'code-char))))
+       (set# token *tries* (make-try :id id :quests (generate-quests)))
+       (set-cookie "tok" :path "/" :value token)
+       (redirect "/q")))))
+
+(url "/q" ()
+  (if-it (get# (cookie-in "tok") *tries*)
+         (let* ((qs (try-quests it))
+                (quest-pos (position-if-not 'null qs))
+                (quest (elt qs quest-pos)))
+           (ecase (request-method*)
+             (:GET (quest-page quest-pos quest))
+             (:POST (push (pair quest
+                                (mapcar #'cdr (remove-if-not
+                                               #`(string= "answers" (car %))
+                                               (post-parameters*))))
+                          (try-qas it))
+                    (void (elt qs quest-pos))
+                    (if (= quest-pos (1- (length qs)))
+                        (progn (setf (try-ts it) (local-time:now))
+                               (redirect "/rez"))
+                        (redirect "/q")))))
+         (redirect "/")))
+
+(url "/rez/:tid" (tid)
+  (if (string= "all" tid)
+      (mv-bind (user pass) (htt:authorization)
+        (if (and pass (string= pass (get# user *auth-data*)))
+            (result-page)
+            (htt:require-authorization)))
+      (if-it (or (get# tid *tries*)
+                 (get# (cookie-in "tok") *tries*))
+             (result-page it)
+             (redirect "/"))))
+
 
 ;;; startup
 
