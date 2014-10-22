@@ -29,7 +29,7 @@
     .section .rodata
     .LC0:
         .string “Hello World”
-    
+
     .text
     .globl  main
     .type   main,@function
@@ -129,7 +129,7 @@
 
     while (1) {
         execute_instruction(read_memory(IP));
-        // IP - регістр-вказівник інструкції 
+        // IP - регістр-вказівник інструкції
     }
 
 ## Віртуальна машина
@@ -215,3 +215,4 @@ POSIX - Portable Operating System Interface for Unix - Переносимий і
 - [A Crash Course in Modern Hardware](http://www.infoq.com/presentations/click-crash-course-modern-hardware)
 - [The C Programming Language](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.126.4437&rep=rep1&type=pdf) або [Learn C The Hard Way] (http://c.learncodethehardway.org/book/)
 - [The Unix Programming Environment](http://netlib.bell-labs.com/cm/cs/upe/)
+- [Tanenbaum–Torvalds debate](http://en.wikipedia.org/wiki/Tanenbaum%E2%80%93Torvalds_debate)

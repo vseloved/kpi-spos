@@ -169,5 +169,7 @@
 	- [What Your Computer Does While You Wait](http://duartes.org/gustavo/blog/post/what-your-computer-does-while-you-wait)
 	- [Cache: a place for concealment and safekeeping](http://duartes.org/gustavo/blog/post/intel-cpu-caches)
     - [Page Cache, the Affair Between Memory and Files](http://duartes.org/gustavo/blog/post/page-cache-the-affair-between-memory-and-files)
+- [How Bad Can 1GB Pages Be?](http://www.pvk.ca/Blog/2014/02/18/how-bad-can-1gb-pages-be/)
+- [How Misaligning Data Can Increase Performance 12x by Reducing Cache Misses](http://danluu.com/3c-conflict/)
 - [Real Mode Memory Management](http://www.internals.com/articles/protmode/realmode.htm)
 - [Memory Testing from Userspace Programs](http://antirez.com/news/43)

@@ -175,5 +175,4 @@
 - [Kernel command using Linux system calls](http://www.ibm.com/developerworks/library/l-system-calls/)
 - [The Linux Kernel: System Calls](http://www.win.tue.nl/~aeb/linux/lk/lk-4.html)
 - [Sysenter Based System Call Mechanism in Linux 2.6](http://articles.manugarg.com/systemcallinlinux2_6.html)
-- [Kernel command using Linux system calls](http://www.ibm.com/developerworks/library/l-system-calls/)
 - [Reverse Engineering for Beginners](http://yurichev.com/writings/RE_for_beginners-en.pdf)

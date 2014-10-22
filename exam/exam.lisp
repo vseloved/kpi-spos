@@ -78,7 +78,8 @@
 (defparameter +center-style+
   ".center {
      margin: auto; position: absolute; top: 0; left: 0; bottom: 0;
-     right: 0; display: table; height: auto;
+     right: 0; display: table; height: 50%; width: 50%;
+     overflow: auto;
    }")
 
 (defun login-page ()
@@ -110,14 +111,21 @@
                                 (who:str (sub answer 2))) :br))
              (:input :type "submit" :value "Відправити"))))))
 
-(defun try-quest-grades (try)
+(defun try-quest-grades (try &optional detailed)
   (who:with-html-output-to-string (out)
     (dolist (qa (reverse (try-qas try)))
       (who:htm (:li (who:fmt "~A - ~A"
                              (substr (quest-text (lt qa)) 0 -1)
-                             (grade-qa qa)))))))
+                             (grade-qa qa))
+                    (when detailed
+                      (dolist (a (quest-answers (lt qa)))
+                        (when (char= #\+ (char a 0))
+                          (who:htm
+                           :br (who:fmt "~:[-~;+~] ~A"
+                                        (find (sub a 2) (rt qa) :test 'string=)
+                                        (sub a 2))))))))))
 
-(defun result-page (&optional try)
+(defun result-page (&optional try detailed)
   (who:with-html-output-to-string (out)
     (:html
      (:head
@@ -139,7 +147,7 @@
                     (:div (who:fmt "[~A] ~A сек. Результат ~A: ~A балів."
                                    (try-ts try) (try-time try)
                                    (try-id try) (grade-try try)))
-                    (:ol (who:str (try-quest-grades try))))))))))))
+                    (:ol (who:str (try-quest-grades try detailed))))))))))))
 
 
 ;;; Web controller
@@ -148,7 +156,7 @@
 (dolines (line (merge-pathnames "auth.txt" *load-truename*))
   (apply #`(set# % *auth-data* %%) (split #\Space line)))
 
-(url "/" ()
+(uri "/" ()
   (ecase (request-method*)
     (:GET (login-page))
     (:POST
@@ -163,7 +171,7 @@
        (set-cookie "tok" :path "/" :value token)
        (redirect "/q")))))
 
-(url "/q" ()
+(uri "/q" ()
   (if-it (get# (cookie-in "tok") *tries*)
          (let* ((qs (try-quests it))
                 (quest-pos (position-if-not 'null qs))
@@ -185,11 +193,11 @@
                         (redirect "/q")))))
          (redirect "/")))
 
-(url "/rez/:tid" (tid)
+(uri "/rez/:tid" (tid)
   (if (string= "all" tid)
       (mv-bind (user pass) (htt:authorization)
         (if (and pass (string= pass (get# user *auth-data*)))
-            (result-page)
+            (result-page nil t)
             (htt:require-authorization)))
       (if-it (or (get# tid *tries*)
                  (get# (cookie-in "tok") *tries*))

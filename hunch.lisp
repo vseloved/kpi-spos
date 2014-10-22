@@ -2,7 +2,6 @@
 (ql:quickload '#:rutils)
 (ql:quickload '#:hunchentoot)
 (ql:quickload '#:named-readtables)
-;(ql:quickload '#:swank)
 
 (cl:rename-package "CL-PPCRE" "CL-PPCRE" '("PPCRE" "RE"))
 (cl:rename-package "HUNCHENTOOT" "HUNCHENTOOT" '("TBNL" "HTT"))
@@ -15,13 +14,14 @@
            #:*port*
            #:*swank-port*
            #:*debug*
-           #:url
-           #:list-urls
            #:start-web
            #:restart-web
            #:stop-web
-           #:argv
-           #:parse-url-template))
+           #:uri
+           #:fmt-uri
+           #:list-uris
+           #:parse-uri-template
+           #:argv))
 
 (in-package #:hunch)
 (named-readtables:in-readtable rutils-readtable)
@@ -84,44 +84,44 @@
 
 ;;; URL routing
 
-(defun parse-url-template (url)
-  "Split URL into parts of 2 types:
+(defun parse-uri-template (uri)
+  "Split URI into parts of 2 types:
    - constant string
-   - url parameter names (symbols)"
+   - uri parameter names (symbols)"
   (let ((prev 0)
         parts)
-    (do ((pos (position #\: url) (position #\: url :start prev)))
+    (do ((pos (position #\: uri) (position #\: uri :start prev)))
         ((or (null pos) (= pos prev))
-         (push (sub url prev) parts))
+         (push (sub uri prev) parts))
       (unless (= prev pos)
-        (push (sub url prev pos) parts))
-      (setf prev (position-if #`(char= #\/ %) url :start (1+ pos)))
-      (push (mksym (sub url (1+ pos) prev)) parts)
+        (push (sub uri prev pos) parts))
+      (setf prev (position-if #`(char= #\/ %) uri :start (1+ pos)))
+      (push (mksym (sub uri (1+ pos) prev)) parts)
       (if prev
           (when (= prev (1+ pos))
-            (error "Param name is blank in hunch url definition at: ~A" pos))
+            (error "Param name is blank in hunch uri definition at: ~A" pos))
           (return)))
     (reverse parts)))
 
-(defmacro url (url-template (&rest params) &body body)
-  "Define a handler function for URL-TEMPLATE
+(defmacro uri (uri-template (&rest params) &body body)
+  "Define a handler function for URI-TEMPLATE
    on top of HUNCHENTOOT:DEFINE-EASY-HANDLER.
-   The function will be called after the URL-TEMPLATE
-   (like |/foo| for url '/foo'). If the URL contains parameter names
-   (basically keywords, like in '/foo/:bar/baz' bar will be a pramneter name)
-   they may be referenced in easy-handler url parameters."
-  (with-gensyms (req url parts cur pos end)
-    (let ((url-parts (parse-url-template url-template)))
+   The function will be called after HANDLE + <URI-TEMPLATE>
+   (like HANDLE-/FOO for uri '/foo'). If the URI contains parameter names
+   (basically keywords, like in '/foo/:bar/baz' bar will be a parameter name)
+   they may be referenced in easy-handler uri parameters."
+  (with-gensyms (req uri parts cur pos end)
+    (let ((uri-parts (parse-uri-template uri-template)))
       `(htt:define-easy-handler
-           (,(mksym url-template :format "handle-~A")
-            :uri ,(if (rest url-parts)
+           (,(mksym uri-template :format "handle-~A")
+            :uri ,(if (rest uri-parts)
                       `(lambda (,req)
                          (let ((,pos 0)
-                               (,url (htt:request-uri ,req)))
-                           (loop :for ,parts :on ',url-parts :do
+                               (,uri (htt:request-uri ,req)))
+                           (loop :for ,parts :on ',uri-parts :do
                               (let ((,cur (first ,parts)))
                                 (if (stringp ,cur)
-                                    (let ((,end (mismatch ,cur ,url :start2 ,pos)))
+                                    (let ((,end (mismatch ,cur ,uri :start2 ,pos)))
                                       (cond
                                         ((or (not ,end)
                                              (string= "/" (sub ,cur ,end)))
@@ -133,23 +133,32 @@
                                         (t (return))))
                                     (let (,end)
                                       (when (rest ,parts)
-                                        (if-it (search (second ,parts) ,url
+                                        (if-it (search (second ,parts) ,uri
                                                        :start2 ,pos)
                                                (setf ,end it
                                                      ,parts (rest ,parts))
                                                (return)))
                                       (push (cons (string-downcase (string ,cur))
-                                                  (sub ,url ,pos ,end))
+                                                  (sub ,uri ,pos ,end))
                                             (slot-value ,req 'htt:get-parameters))
                                       (if (rest ,parts)
                                           (setf ,pos ,end)
                                           (return t))))))))
-                      url-template))
+                      uri-template))
            (,@params)
          ,@body))))
 
-(defun print-urls ()
-  "Print defined urls with their handler functions."
+(defmacro fmt-uri (handler &rest args &key &allow-other-keys)
+  "Return a string representation of HANDLER's uri
+   with uri-parameters substitutted for values of ARGS.
+   If some parameter is missing, UNBOUND-VARIABLE will be signalled."
+  `(let (,@(loop :for (var val) :on args :by #'cddr
+              :collect (list (mksym var) val)))
+     (strcat ,@(parse-uri-template (sub (symbol-name handler)
+                                        #.(length "handle-"))))))
+
+(defun print-uris ()
+  "Print defined uris with their handler functions."
   (dolist (record htt::*easy-handler-alist*)
     (format t "~A ~A~%" (first record) (third record))))
 
