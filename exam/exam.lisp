@@ -47,8 +47,10 @@
     (reversef *topics*)))
 
 (defun generate-quests (&optional (n 10))
-  (loop :for (beg end) :on *topics* :repeat n
-     :nconc (coerce (sub (shuffle (sub *questions* beg end)) 0 2) 'list)))
+  (let ((by-topic (floor n (length *topics*))))
+    (loop :for (beg end) :on *topics* :repeat n
+       :nconc (coerce (sub (shuffle (sub *questions* beg end)) 0 by-topic)
+                      'list))))
 
 (defun grade-qa (qa)
   (let ((score 0))
@@ -139,7 +141,7 @@
                                 (grade-try try)))
                  (:ol (who:str (try-quest-grades try)))))
           (who:htm
-           (:p (who:fmt "Всего результатов: ~A" (ht-count *tries*)))
+           (:p (who:fmt "Всього результатів: ~A" (ht-count *tries*)))
            (dotable (_ try *tries*)
              (who:htm
               :br
