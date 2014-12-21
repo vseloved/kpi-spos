@@ -147,7 +147,9 @@
              (who:htm
               :br
               (:div :class "center" :style "font-size: 20px;"
-                    (:div "[" (:a :href (fmt "/rez/~A" tok) (exam-ts exam)) "]"
+                    (:div "["
+                          (:a :href (fmt "/rez/~A" tok) (who:str (exam-ts exam)))
+                          "]"
                           (who:fmt " ~A сек. Результат ~A: ~A балів."
                                    (exam-time exam) (exam-id exam)
                                    (grade-exam exam)))
