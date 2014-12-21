@@ -8,17 +8,6 @@
 
 (eval-always (setf sb-impl::*default-external-format* :utf-8))
 
-(defmacro void (place)
-  "Nullify PLACE."
-  `(setf ,place nil))
-
-(defstruct (pair (:type list) (:conc-name nil))
-  "A generic pair with left (LT) and right (RT) elements."
-  lt rt)
-(defun pair (x y)
-  "A shortcut to make a pair of X and Y."
-  (make-pair :lt x :rt y))
-
 
 ;;; Questions
 
