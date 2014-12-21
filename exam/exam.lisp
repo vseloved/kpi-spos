@@ -120,13 +120,15 @@
                              (substr (quest-text (lt qa)) 0 -1)
                              (grade-qa qa))
                     (when detailed
-                      (dolist (a (quest-answers (lt qa)))
-                        (when (char= #\+ (char a 0))
+                      (let ((as (quest-answers (lt qa))))
+                        (dolist (a (rt qa))
                           (who:htm
                            :br
-                           (who:fmt "~:[-~;+~] ~A"
-                                    (find (sub a 2) (rt qa) :test 'string=)
-                                    (sub a 2)))))))))))
+                           (who:fmt "~C ~A"
+                                    (char (find a as :test 'string=
+                                                :key #`(sub % 2))
+                                          0)
+                                    a))))))))))
 
 (defun result-page (&optional exam detailed)
   (who:with-html-output-to-string (out)
@@ -148,7 +150,7 @@
               :br
               (:div :class "center" :style "font-size: 20px;"
                     (:div "["
-                          (:a :href (fmt "/rez/~A" tok) (who:str (exam-ts exam)))
+                          (:a :href (fmt "/rez/~A" tok) (who:str (exam-id exam)))
                           "]"
                           (who:fmt " ~A сек. Результат ~A: ~A балів."
                                    (exam-time exam) (exam-id exam)
