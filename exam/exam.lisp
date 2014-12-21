@@ -67,12 +67,12 @@
 
 (defvar *tries* (make-hash-table :test 'equalp))
 
-(defstruct try
+(defstruct qa
   id ts time quests qas)
 
-(defun grade-try (try)
-  (ceiling (* (/ 40 (length (try-quests try)))
-              (reduce #'+ (mapcar #'grade-qa (try-qas try))))))
+(defun grade-qa (qa)
+  (ceiling (* (/ 40 (length (qa-quests qa)))
+              (reduce #'+ (mapcar #'grade-qa (qa-qas qa))))))
 
 
 ;;; Pages
@@ -113,9 +113,9 @@
                                 (who:str (sub answer 2))) :br))
              (:input :type "submit" :value "Відправити"))))))
 
-(defun try-quest-grades (try &optional detailed)
+(defun qa-quest-grades (qa &optional detailed)
   (who:with-html-output-to-string (out)
-    (dolist (qa (reverse (try-qas try)))
+    (dolist (qa (reverse (qa-qas qa)))
       (who:htm (:li (who:fmt "~A - ~A"
                              (substr (quest-text (lt qa)) 0 -1)
                              (grade-qa qa))
@@ -125,31 +125,31 @@
                           (who:htm
                            :br (who:fmt "~:[-~;+~] ~A"
                                         (find (sub a 2) (rt qa) :test 'string=)
-                                        (sub a 2))))))))))
+                                        (sub a 2)))))))))))
 
-(defun result-page (&optional try detailed)
+(defun result-page (&optional qa detailed)
   (who:with-html-output-to-string (out)
     (:html
      (:head
       (:title "Результат")
       (:style +center-style+))
      (:body
-      (if try
+      (if qa
           (who:htm
            (:div :class "center" :style "font-size: 20px;"
                  (:div (who:fmt "Ваш результат: ~A балів."
-                                (grade-try try)))
-                 (:ol (who:str (try-quest-grades try)))))
+                                (grade-qa qa)))
+                 (:ol (who:str (qa-quest-grades qa detailed)))))
           (who:htm
            (:p (who:fmt "Всього результатів: ~A" (ht-count *tries*)))
-           (dotable (_ try *tries*)
+           (dotable (_ qa *tries*)
              (who:htm
               :br
               (:div :class "center" :style "font-size: 20px;"
                     (:div (who:fmt "[~A] ~A сек. Результат ~A: ~A балів."
-                                   (try-ts try) (try-time try)
-                                   (try-id try) (grade-try try)))
-                    (:ol (who:str (try-quest-grades try detailed))))))))))))
+                                   (qa-ts qa) (qa-time qa)
+                                   (qa-id qa) (grade-qa qa)))
+                    (:ol (who:str (qa-quest-grades qa detailed))))))))))))
 
 
 ;;; Web controller
@@ -168,14 +168,14 @@
                             (md5:md5sum-string
                              (strcat id (princ-to-string (local-time:now))))
                             :key #'code-char))))
-       (set# token *tries* (make-try :id id :quests (generate-quests)
+       (set# token *tries* (make-qa :id id :quests (generate-quests)
                                      :time (get-universal-time)))
        (set-cookie "tok" :path "/" :value token)
        (redirect "/q")))))
 
 (uri "/q" ()
   (if-it (get# (cookie-in "tok") *tries*)
-         (let* ((qs (try-quests it))
+         (let* ((qs (qa-quests it))
                 (quest-pos (position-if-not 'null qs))
                 (quest (elt qs quest-pos)))
            (ecase (request-method*)
@@ -184,13 +184,13 @@
                                 (mapcar #'cdr (remove-if-not
                                                #`(string= "answers" (car %))
                                                (post-parameters*))))
-                          (try-qas it))
+                          (qa-qas it))
                     (void (elt qs quest-pos))
                     (if (= quest-pos (1- (length qs)))
                         (progn
-                          (setf (try-time it) (- (get-universal-time)
-                                                 (try-time it))
-                                (try-ts it) (local-time:now))
+                          (setf (qa-time it) (- (get-universal-time)
+                                                (qa-time it))
+                                (qa-ts it) (local-time:now))
                           (redirect "/rez"))
                         (redirect "/q")))))
          (redirect "/")))
