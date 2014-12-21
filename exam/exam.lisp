@@ -170,8 +170,8 @@
                             (md5:md5sum-string
                              (strcat id (princ-to-string (local-time:now))))
                             :key #'code-char))))
-       (set# token *exam* (make-exam :id id :quests (generate-quests)
-                                           :time (get-universal-time)))
+       (set# token *exams* (make-exam :id id :quests (generate-quests)
+                                      :time (get-universal-time)))
        (set-cookie "tok" :path "/" :value token)
        (redirect "/q")))))
 
@@ -204,7 +204,7 @@
             (result-page nil t)
             (htt:require-authorization)))
       (if-it (or (get# tid *exams*)
-                 (get# (cookie-in "tok") *exam*))
+                 (get# (cookie-in "tok") *exams*))
              (result-page it (in# tid *exams*))
              (redirect "/"))))
 
