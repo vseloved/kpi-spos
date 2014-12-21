@@ -63,16 +63,16 @@
                                  (quest-answers (lt qa))))))))
 
 
-;;; Tries
+;;; Sessions
 
-(defvar *tries* (make-hash-table :test 'equalp))
+(defvar *sessions* (make-hash-table :test 'equalp))
 
-(defstruct qa
+(defstruct session
   id ts time quests qas)
 
-(defun grade-qa (qa)
-  (ceiling (* (/ 40 (length (qa-quests qa)))
-              (reduce #'+ (mapcar #'grade-qa (qa-qas qa))))))
+(defun grade-session (session)
+  (ceiling (* (/ 40 (length (session-quests session)))
+              (reduce #'+ (mapcar #'grade-qa (session-qas session))))))
 
 
 ;;; Pages
@@ -113,9 +113,9 @@
                                 (who:str (sub answer 2))) :br))
              (:input :type "submit" :value "Відправити"))))))
 
-(defun qa-quest-grades (qa &optional detailed)
+(defun session-grade-block (session &optional detailed)
   (who:with-html-output-to-string (out)
-    (dolist (qa (reverse (qa-qas qa)))
+    (dolist (qa (reverse (session-qas session)))
       (who:htm (:li (who:fmt "~A - ~A"
                              (substr (quest-text (lt qa)) 0 -1)
                              (grade-qa qa))
@@ -123,33 +123,35 @@
                       (dolist (a (quest-answers (lt qa)))
                         (when (char= #\+ (char a 0))
                           (who:htm
-                           :br (who:fmt "~:[-~;+~] ~A"
-                                        (find (sub a 2) (rt qa) :test 'string=)
-                                        (sub a 2)))))))))))
+                           :br
+                           (who:fmt "~:[-~;+~] ~A"
+                                    (find (sub a 2) (rt qa) :test 'string=)
+                                    (sub a 2)))))))))))
 
-(defun result-page (&optional qa detailed)
+(defun result-page (&optional session detailed)
   (who:with-html-output-to-string (out)
     (:html
      (:head
       (:title "Результат")
       (:style +center-style+))
      (:body
-      (if qa
+      (if session
           (who:htm
            (:div :class "center" :style "font-size: 20px;"
-                 (:div (who:fmt "Ваш результат: ~A балів."
-                                (grade-qa qa)))
-                 (:ol (who:str (qa-quest-grades qa detailed)))))
+                 (:div (who:fmt "Результат: ~A балів."
+                                (grade-session session)))
+                 (:ol (who:str (session-grade-block session detailed)))))
           (who:htm
-           (:p (who:fmt "Всього результатів: ~A" (ht-count *tries*)))
-           (dotable (_ qa *tries*)
+           (:p (who:fmt "Всього результатів: ~A" (ht-count *sessions*)))
+           (dotable (tok session *sessions*)
              (who:htm
               :br
               (:div :class "center" :style "font-size: 20px;"
-                    (:div (who:fmt "[~A] ~A сек. Результат ~A: ~A балів."
-                                   (qa-ts qa) (qa-time qa)
-                                   (qa-id qa) (grade-qa qa)))
-                    (:ol (who:str (qa-quest-grades qa detailed))))))))))))
+                    (:div "[" (:a :href (fmt "/rez/~A" tok) (session-ts session)) "]"
+                          (who:fmt " ~A сек. Результат ~A: ~A балів."
+                                   (session-time session) (session-id session)
+                                   (grade-session session)))
+                    (:ol (who:str (session-grade-block session))))))))))))
 
 
 ;;; Web controller
@@ -168,14 +170,14 @@
                             (md5:md5sum-string
                              (strcat id (princ-to-string (local-time:now))))
                             :key #'code-char))))
-       (set# token *tries* (make-qa :id id :quests (generate-quests)
-                                     :time (get-universal-time)))
+       (set# token *session* (make-session :id id :quests (generate-quests)
+                                           :time (get-universal-time)))
        (set-cookie "tok" :path "/" :value token)
        (redirect "/q")))))
 
 (uri "/q" ()
-  (if-it (get# (cookie-in "tok") *tries*)
-         (let* ((qs (qa-quests it))
+  (if-it (get# (cookie-in "tok") *sessions*)
+         (let* ((qs (session-quests it))
                 (quest-pos (position-if-not 'null qs))
                 (quest (elt qs quest-pos)))
            (ecase (request-method*)
@@ -184,13 +186,13 @@
                                 (mapcar #'cdr (remove-if-not
                                                #`(string= "answers" (car %))
                                                (post-parameters*))))
-                          (qa-qas it))
+                          (session-qas it))
                     (void (elt qs quest-pos))
                     (if (= quest-pos (1- (length qs)))
                         (progn
-                          (setf (qa-time it) (- (get-universal-time)
-                                                (qa-time it))
-                                (qa-ts it) (local-time:now))
+                          (setf (session-time it) (- (get-universal-time)
+                                                     (session-time it))
+                                (session-ts it) (local-time:now))
                           (redirect "/rez"))
                         (redirect "/q")))))
          (redirect "/")))
@@ -201,9 +203,9 @@
         (if (and pass (string= pass (get# user *auth-data*)))
             (result-page nil t)
             (htt:require-authorization)))
-      (if-it (or (get# tid *tries*)
-                 (get# (cookie-in "tok") *tries*))
-             (result-page it)
+      (if-it (or (get# tid *sessions*)
+                 (get# (cookie-in "tok") *session*))
+             (result-page it (in# tid *sessions*))
              (redirect "/"))))
 
 
