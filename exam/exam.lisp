@@ -125,9 +125,10 @@
                           (who:htm
                            :br
                            (who:fmt "~C ~A"
-                                    (char (find a as :test 'string=
-                                                :key #`(sub % 2))
-                                          0)
+                                    (if-it (find a as :test 'string=
+                                                 :key #`(slice % 2))
+                                           (char it 0)
+                                           "?")
                                     a))))))))))
 
 (defun result-page (&optional exam detailed)
