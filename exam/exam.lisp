@@ -8,17 +8,6 @@
 
 (eval-always (setf sb-impl::*default-external-format* :utf-8))
 
-(defmacro void (place)
-  "Nullify PLACE."
-  `(setf ,place nil))
-
-(defstruct (pair (:type list) (:conc-name nil))
-  "A generic pair with left (LT) and right (RT) elements."
-  lt rt)
-(defun pair (x y)
-  "A shortcut to make a pair of X and Y."
-  (make-pair :lt x :rt y))
-
 
 ;;; Questions
 
@@ -109,9 +98,10 @@
              :br
              (dolist (answer (shuffle (quest-answers quest)))
                (who:htm (:input :name "answers" :type "checkbox"
-                                :value (sub answer 2)
-                                (who:str (sub answer 2))) :br))
-             (:input :type "submit" :value "Відправити"))))))
+                                :value (substitute #\* #\' (sub answer 2))
+                                (who:str (sub answer 2)))
+                        :br))
+             (:input :type "submit" :value "Відповісти"))))))
 
 (defun exam-grade-block (exam &optional detailed)
   (who:with-html-output-to-string (out)
@@ -187,19 +177,20 @@
                 (quest (elt qs quest-pos)))
            (ecase (request-method*)
              (:GET (quest-page quest-pos quest))
-             (:POST (push (pair quest
-                                (mapcar #'cdr (remove-if-not
-                                               #`(string= "answers" (car %))
-                                               (post-parameters*))))
-                          (exam-qas it))
-                    (void (elt qs quest-pos))
-                    (if (= quest-pos (1- (length qs)))
-                        (progn
-                          (setf (exam-time it) (- (get-universal-time)
-                                                     (exam-time it))
-                                (exam-ts it) (local-time:now))
-                          (redirect "/rez"))
-                        (redirect "/q")))))
+             (:POST
+              (push (pair quest
+                          (mapcar #`(substitute #\' #\* (cdr %))
+                                  (remove-if-not #`(string= "answers" (car %))
+                                                 (post-parameters*))))
+                    (exam-qas it))
+              (void (elt qs quest-pos))
+              (if (= quest-pos (1- (length qs)))
+                  (progn
+                    (setf (exam-time it) (- (get-universal-time)
+                                            (exam-time it))
+                          (exam-ts it) (local-time:now))
+                    (redirect "/rez"))
+                  (redirect "/q")))))
          (redirect "/")))
 
 (uri "/rez/:tid" (tid)
