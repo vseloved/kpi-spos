@@ -124,7 +124,7 @@
                         (dolist (a (rt qa))
                           (who:htm
                            :br
-                           (who:fmt "~C ~A"
+                           (who:fmt "~A ~A"
                                     (if-it (find a as :test 'string=
                                                  :key #`(slice % 2))
                                            (char it 0)
