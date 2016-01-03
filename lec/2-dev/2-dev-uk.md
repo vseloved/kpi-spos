@@ -155,16 +155,21 @@ BIOS - це стандартний для x86 інтерфейс прошивк�
 ## Література
 
 - [PC Architecture](http://www.karbosguide.com/books/pcarchitecture/start.htm)
+- [What's New in CPUs Since the 80s and How Does It Affect Programmers?](http://danluu.com/new-cpu-features/)
 - [Interrupts and Exceptions](http://www.cs.columbia.edu/~nahum/w6998/lectures/interrupts.ppt)
 - [Interrupt Handling Contexts](http://0x657573.wordpress.com/2010/11/29/the-crisp-boundary-between-hardirq-context-softirq-context-and-user-context/)
+- [Linux Insides series](https://github.com/0xAX/linux-insides)
+    - [Interrupts and Interrupt Handling](https://github.com/0xAX/linux-insides/tree/master/interrupts)
+    - [Timers and time management](https://github.com/0xAX/linux-insides/tree/master/Timers)
+    - [Kernel boot process](https://github.com/0xAX/linux-insides/tree/master/Booting)
+    - [Kernel initialization process](https://github.com/0xAX/linux-insides/tree/master/Initialization)
 - [Jiffies](http://www.makelinux.net/books/lkd2/ch10lev1sec3)
-- [Latency Numbers Every Programmer Should Know](https://gist.github.com/jboner/2841832)
 - [Software Illustrated series by Gustavo Duarte](http://duartes.org/gustavo/blog/category/internals):
 	- [CPU Rings, Privilege, and Protection](http://duartes.org/gustavo/blog/post/cpu-rings-privilege-and-protection)
     - [How Computers Boot Up](http://duartes.org/gustavo/blog/post/how-computers-boot-up)
 	- [The Kernel Boot Process](http://duartes.org/gustavo/blog/post/kernel-boot-process)
+- [The Linux/x86 Boot Protocol](https://github.com/torvalds/linux/blob/master/Documentation/x86/boot.txt)- [Latency Numbers Every Programmer Should Know](https://gist.github.com/jboner/2841832)
 - [Linux Device Drivers, Third Edition](http://lwn.net/Kernel/LDD3/)
-- [The Linux Kernel Driver Model: The Benefits of Working Together](http://fengnet.com/book/Beautiful.Code.2007/120.the_linux_kernel_driver_model_the_benefits_of_working_togeth.html)
-- [Writing Device Drivers in Linux](http://www.freesoftwaremagazine.com/articles/drivers_linux)
+- [The Linux Kernel Driver Model: The Benefits of Working Together](https://books.google.com.ua/books?id=gJrmszNHQV4C&lpg=PA267&ots=rMTWwzUase&dq=The%20Linux%20Kernel%20Driver%20Model%3A%20The%20Benefits%20of%20Working%20Together&pg=PA267#v=onepage&q&f=false)- [Writing Device Drivers in Linux](http://www.freesoftwaremagazine.com/articles/drivers_linux)
 - [Another Level of Indirection](http://www.spinellis.gr/pubs/inbook/beautiful_code/html/Spi07g.html)
-
+- [x86 DOS Boot Sector Written in C](http://crimsonglow.ca/~kjiwa/x86-dos-boot-sector-in-c.html)

@@ -154,4 +154,6 @@
 - [Tour of the Black Holes of Computing: Network Programming](http://www.cs.hmc.edu/~geoff/classes/hmc.cs105.200809/slides/class23_net2.ppt)
 - [Beej's Guide to Network Programming](http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html)
 - [Socket System Calls](http://www.slideshare.net/AvinashVarma/socket-system-calls)
+- [How TCP backlog works in Linux](http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html)
+- [TCP in 30 instructions ](http://www.pdl.cmu.edu/mailinglists/ips/mail/msg00133.html)
 - [Мультиплексирование ввода-вывода](http://ro-che.info/docs/2011-11-29-io-multiplexing.pdf)

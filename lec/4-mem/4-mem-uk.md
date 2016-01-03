@@ -68,9 +68,14 @@
 
 ## Сегментна організація пам'яті
 
-Сегментна організація віртуальної пам'яті реалізує наступний механізм: вся пам'ять ділитися на сегменти фіксованою або довільної довжини, кожний з яких характеризується своєю початковою адресою — **базою** або **селектором**. Віртуальна адреса в такій системі складається з двох компонент: **бази** сегмента, до якого ми хочемо звернутися, і **зміщення** всередині сегмента.
+Сегментна організація віртуальної пам'яті реалізує наступний механізм: вся пам'ять ділитися на сегменти фіксованою або довільної довжини, кожний з яких характеризується своєю початковою адресою — **базою** або **селектором**. Віртуальна адреса в такій системі складається з двох компонент: **бази** сегмента, до якого ми хочемо звернутися, і **зміщення** всередині сегмента. Фізична адреса обчислюється за формулою:
+
+    addr = base + offset
 
 ![Представлення сегментної моделі віртуальної пам'яті](img/segmentation.jpg)
+
+:br
+
 
 ### Історична модель сегментації в архітектурі х86
 
@@ -159,7 +164,7 @@
 ## Література
 
 - [Управление памятью](http://citforum.ru/operating_systems/sos/glava_7.shtml)
-- [Виртуальная память](http://gendocs.ru/v31765/?cc=9)
+- [Виртуальная память](http://gendocs.ru/v31765/?download2=9)
 - [What Every Programmer Should Know About Memory](http://people.redhat.com/drepper/cpumemory.pdf)
 - [The Memory Management Reference](http://www.memorymanagement.org/)
 - [Software Illustrated series by Gustavo Duarte](http://duartes.org/gustavo/blog/category/internals):
@@ -169,7 +174,14 @@
 	- [What Your Computer Does While You Wait](http://duartes.org/gustavo/blog/post/what-your-computer-does-while-you-wait)
 	- [Cache: a place for concealment and safekeeping](http://duartes.org/gustavo/blog/post/intel-cpu-caches)
     - [Page Cache, the Affair Between Memory and Files](http://duartes.org/gustavo/blog/post/page-cache-the-affair-between-memory-and-files)
+- [Memory Allocators 101](http://jamesgolick.com/2013/5/15/memory-allocators-101.html)
+- [Doug Lea's malloc](http://g.oswego.edu/dl/html/malloc.html)
+- [How tcmalloc Works](http://jamesgolick.com/2013/5/19/how-tcmalloc-works.html)
+- [Visualizing Garbage Collection Algorithms](http://spin.atomicobject.com/2014/09/03/visualizing-garbage-collection-algorithms/)
 - [How Bad Can 1GB Pages Be?](http://www.pvk.ca/Blog/2014/02/18/how-bad-can-1gb-pages-be/)
 - [How Misaligning Data Can Increase Performance 12x by Reducing Cache Misses](http://danluu.com/3c-conflict/)
 - [Real Mode Memory Management](http://www.internals.com/articles/protmode/realmode.htm)
 - [Memory Testing from Userspace Programs](http://antirez.com/news/43)
+- [How L1 and L2 CPU caches work](http://www.extremetech.com/extreme/188776-how-l1-and-l2-cpu-caches-work-and-why-theyre-an-essential-part-of-modern-chips)
+- [Redis latency spikes and the Linux kernel](http://antirez.com/news/84)
+- [Kernel-bypass Networking Illustrated](https://github.com/lukego/blog/issues/13)

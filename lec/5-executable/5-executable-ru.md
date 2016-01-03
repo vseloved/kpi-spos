@@ -1,12 +1,12 @@
 ## Программа в памяти (в Linux)
 
-![Программа в памяти](img/prog-mem.jpg)
-
 Выполнение программы начинается с системного вызова `exec`, которому передается путь к файлу с бинарным кодом программы. `exec` — это интерфейс к загрузчику программ ОС, который загружает секции программы в память в зависимости от формата исполняемого файла, а также выделяет дополнительные секции динамической памяти. После загрузки память программы продолжает быть разделенной на отдельные секции. Указатели на начало/конец и другие свойства каждой секции находятся в структуре `mm_struct` текущего процесса.
 
-![Сегменты памяти процесса](img/proc-mem.jpg)
-
 Для загрузки отдельных сегментов в память используется системный вызов `mmap`.
+
+![Программа в памяти](img/prog-mem.jpg)
+
+![Сегменты памяти процесса](img/proc-mem.jpg)
 
 ![Более подробная схема сегментов памяти процесса](img/proc-mem2.jpg)
 
@@ -156,7 +156,7 @@
 
 Для поддержки позднего связывания функций через механизм "трамплина" также используется таблица компоновки процедур (Procedure Linkage Table, PLT).
 
-![Реализация трамплина при вызове функции с помозью таблицы компоновки процедур](img/plt.jpg)
+![Реализация трамплина при вызове функции с помощью таблицы компоновки процедур](img/plt.jpg)
 
 
 ## Виртуальные машины
@@ -213,11 +213,7 @@
 - [Anatomy of a Program in Memory](http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory)
 - [How is a binary executable organized](http://jvns.ca/blog/2014/09/06/how-to-read-an-executable/)
 - [Inside Memory Management](http://www.ibm.com/developerworks/linux/library/l-memory/)
-- [x86 Registers](http://www.eecg.toronto.edu/~amza/www.mindsec.com/files/x86regs.html)
 - [Stack frame layout on x86-64](http://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64/)
-- [Doug Lea's malloc](http://g.oswego.edu/dl/html/malloc.html)
-- [Visualizing Garbage Collection Algorithms](http://spin.atomicobject.com/2014/09/03/visualizing-garbage-collection-algorithms/)
-- [Demystifying Garbage Collectors](http://xtzgzorex.wordpress.com/2012/10/11/demystifying-garbage-collectors/)
 - Eli Bendrski on Static and Dynamic Object Code in Linux:
 	- [How Statically Linked Programs Run on Linux](http://eli.thegreenplace.net/2012/08/13/how-statically-linked-programs-run-on-linux/)
 	- [Load-time relocation of shared libraries](http://eli.thegreenplace.net/2011/08/25/load-time-relocation-of-shared-libraries/)

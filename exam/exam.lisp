@@ -42,14 +42,15 @@
                       'list))))
 
 (defun grade-qa (qa)
-  (let ((score 0))
+  (let ((as (rt qa))
+        (score 0))
     (dolist (a (quest-answers (lt qa)))
-      (when (and (find (sub a 2) (rt qa) :test 'string=)
+      (when (and (find (sub a 2) as :test 'string=)
                  (char= #\+ (char a 0)))
         (incf score)))
-    (float (/ score
-              (length (remove-if #`(char= #\- (char % 0))
-                                 (quest-answers (lt qa))))))))
+    (if (zerop (length as))
+        0
+        (float (/ score (length as))))))
 
 
 ;;; Exams
@@ -110,15 +111,14 @@
                              (substr (quest-text (lt qa)) 0 -1)
                              (grade-qa qa))
                     (when detailed
-                      (let ((as (quest-answers (lt qa))))
-                        (dolist (a (rt qa))
+                      (let ((as (rt qa)))
+                        (dolist (a (quest-answers (lt qa)))
                           (who:htm
                            :br
                            (who:fmt "~A ~A"
-                                    (if-it (find a as :test 'string=
-                                                 :key #`(slice % 2))
-                                           (char it 0)
-                                           "?")
+                                    (if (find (slice a 2) as :test 'string=)
+                                        "[+]"
+                                        "[-]")
                                     a))))))))))
 
 (defun result-page (&optional exam detailed)
@@ -165,7 +165,7 @@
                             (md5:md5sum-string
                              (strcat id (princ-to-string (local-time:now))))
                             :key #'code-char))))
-       (set# token *exams* (make-exam :id id :quests (generate-quests)
+       (set# token *exams* (make-exam :id id :quests (generate-quests 25)
                                       :time (get-universal-time)))
        (set-cookie "tok" :path "/" :value token)
        (redirect "/q")))))

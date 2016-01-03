@@ -83,16 +83,19 @@
 
 Використовуючи ці примітиви ОС вибудовує систему безпеки. Основа цієї системи в більшості ОС:
 
-- это выполнение всех критических операций в ядре ОС и предоставление ограниченного интерфейса к ним через механизм системных вызовов
-- поділ користувачів на адміністраторів (в Unix-системах: особливий користувач `root`) і звичайних користувачів
+- виконання всіх критичних операцій в ядрі ОС та надання обмеженого інтерфейсу до них через механізм системних викликів
+- разделение пользователей на администраторов (в Unix-системах: особый пользователь `root`) и обычных пользователей
+
+:br
 
 
 ## Література
 
 - [Secure Systems Design Principles](http://wwwusers.di.uniroma1.it/~parisi/Risorse/Principles.pdf)
 - [Defensive Programming](http://c.learncodethehardway.org/book/ex27.html)
-- [CWE/SANS Top 25 Most Dangerous Software Errors](http://www.redspin.com/blog/2011/06/28/the-cwesans-top-25-most-dangerous-software-errors-announced%E2%80%A6-along-with-a-new-set-of-standards/)
+- [CWE/SANS Top 25 Most Dangerous Software Errors](https://www.sans.org/top25-software-errors/)
 - [Capability Myths Demolished](http://zesty.ca/capmyths/)
 - [Classic Buffer Overflow Explained](http://thexploit.com/secdev/a-textbook-buffer-overflow-a-look-at-the-freebsd-telnetd-code/)
 - [Priviledge Escalation Bug in Linux](http://timetobleed.com/detailed-explanation-of-a-recent-privilege-escalation-bug-in-linux-cve-2010-3301/)
 - [How to Exploit an XSS](http://blog.detectify.com/post/35208929112/how-to-exploit-an-xss)
+- [Server compromised due to publicly accessible Redis](http://kevinchen.co/blog/postmortem-server-compromised/)

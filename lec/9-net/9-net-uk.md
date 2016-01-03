@@ -78,7 +78,7 @@
 - Читання/запис
 - Конфігурація
 
-Оснвні системні виклики для роботи із сокетами:
+Основні системні виклики для роботи із сокетами:
 
 - `socket` — створення сокета
 - `connect` — ініціація клієнтського з'єднання
@@ -135,9 +135,9 @@
 
 Реалізація RPC може бути заснована на власному (ad hoc) або ж якомусь із стандартних протоколів прикладного рівня і представлення. Наприклад, реалізація RPC по методолгіі REST використовує стандартні протоколи HTTP в якості транспортного і JSON/XML для представлення (сериалізації). XML/RPC або JSON/RPC — це ad hoc RPC, які використовує XML або JSON для представлення даних. Протоколи ASN.1 і Thrift — це бінарні протоколи, які визначають реалізацію всіх 3-х рівнів.
 
-У форматах сериализации існує 2 дихотомії: бінарні і текстові формати, а також статичні (що використовують схему) і динамічні (без схеми, schema-less).
+У форматів серіалізації існує 2 дихотомії: бінарні і текстові формати, а також статичні (що використовують схему) і динамічні (без схеми, schema-less).
 
-Поширені формати сериализации включають:
+Поширені формати серіалізації включають:
 
 - JSON — текстовий динамічний формат
 - XML — тестовий формат з опціональною схемою 
@@ -154,4 +154,6 @@
 - [Tour of the Black Holes of Computing: Network Programming](http://www.cs.hmc.edu/~geoff/classes/hmc.cs105.200809/slides/class23_net2.ppt)
 - [Beej's Guide to Network Programming](http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html)
 - [Socket System Calls](http://www.slideshare.net/AvinashVarma/socket-system-calls)
+- [How TCP backlog works in Linux](http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html)
+- [TCP in 30 instructions ](http://www.pdl.cmu.edu/mailinglists/ips/mail/msg00133.html)
 - [Мультиплексирование ввода-вывода](http://ro-che.info/docs/2011-11-29-io-multiplexing.pdf)

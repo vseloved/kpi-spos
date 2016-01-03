@@ -156,8 +156,7 @@
 	mov ecx, str      ; move start address of string message
 	                  ; to ecx register
 	mov edx, str_len  ; move length of message (in bytes)
-	int 80h           ; tell kernel to perform
-	                  ; the system call we just set up
+	int 80h           ; tell kernel to perform the syscall
 
 Пример выполнения системного вызова `write` с помощью инструкции `SYSENTER`:
 
@@ -183,4 +182,5 @@
 - [Kernel command using Linux system calls](http://www.ibm.com/developerworks/library/l-system-calls/)
 - [The Linux Kernel: System Calls](http://www.win.tue.nl/~aeb/linux/lk/lk-4.html)
 - [Sysenter Based System Call Mechanism in Linux 2.6](http://articles.manugarg.com/systemcallinlinux2_6.html)
+- [x86 Instruction Encoding](http://events.linuxfoundation.org/sites/events/files/slides/bpetkov-x86-hacks.pdf)
 - [Reverse Engineering for Beginners](http://yurichev.com/writings/RE_for_beginners-en.pdf)

@@ -50,6 +50,12 @@
 
 Порядок байтів (endianness) в машинному слові визначає послідовність запису байтів: від старшого до молодшого (**big-endian**) або від молодшого до старшого (**little-endian**).
 
+### Регістри процесора
+
+Команди асемблера дозволяють безпосередньо маніпулювати регістрами процесора. Регістр — це невеликий обсяг дуже швидкої пам'яті (як правило, розміром в 1 машинне слово), розміщеної на процесорі. Він призначений для зберігання результатів проміжних обчислень, а також деякої інформації для управління роботою процесора. Так як регістри розміщені безпосередньо на процесорі, доступ до даних, що зберігаються в них, набагато швидше доступу до даних в оперативній пам'яті.
+
+Всі регістри можна розділити на дві групи: **користувацькі** і **системні**. Користувацькі регістри використовуються при написанні "звичайних" програм. У їх число входять основні програмні регістри, а також регістри математичного співпроцесора, регістри MMX, XMM (SSE, SSE2, SSE3) і т.п. До системних регістрів належать регістри управління, регістри управління пам'яттю, регістри відлагодження, машинно-специфічні регістри MSR та інші.
+
 ### Стек
 
 (Більш правильна назва використовуваної структури даних — **стопка** або **магазин**. Однак, історично прижилося запозичена назва стек).
@@ -148,8 +154,7 @@
 	mov ecx, str      ; move start address of string message
 	                  ; to ecx register
 	mov edx, str_len  ; move length of message (in bytes)
-	int 80h           ; tell kernel to perform
-	                  ; the system call we just set up
+	int 80h           ; tell kernel to perform the syscall
 
 Приклад виконання системного виклика `write` за допомогою програмного інструкції `SYSENTER`:
 
@@ -165,14 +170,16 @@
 
 Стандартна бібліотека `libc` реалізує свої функції понад системними викликами.
 
+:br
 
 ## Література
 
 - [Ассемблер в Linux для программистов C](http://ru.wikibooks.org/wiki/%D0%90%D1%81%D1%81%D0%B5%D0%BC%D0%B1%D0%BB%D0%B5%D1%80_%D0%B2_Linux_%D0%B4%D0%BB%D1%8F_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%81%D1%82%D0%BE%D0%B2_C)
 - [Ассемблеры для Linux: Сравнение GAS и NASM](http://www.ibm.com/developerworks/ru/library/l-gas-nasm/)
-- [x86 Registers](http://www.eecg.toronto.edu/~amza/www.mindsec.com/files/x86regs.html)
 - [Why Registers Are Fast and RAM Is Slow](http://www.mikeash.com/pyblog/friday-qa-2013-10-11-why-registers-are-fast-and-ram-is-slow.html)
+- [x86 Registers](http://www.eecg.toronto.edu/~amza/www.mindsec.com/files/x86regs.html)
 - [Kernel command using Linux system calls](http://www.ibm.com/developerworks/library/l-system-calls/)
 - [The Linux Kernel: System Calls](http://www.win.tue.nl/~aeb/linux/lk/lk-4.html)
 - [Sysenter Based System Call Mechanism in Linux 2.6](http://articles.manugarg.com/systemcallinlinux2_6.html)
+- [x86 Instruction Encoding](http://events.linuxfoundation.org/sites/events/files/slides/bpetkov-x86-hacks.pdf)
 - [Reverse Engineering for Beginners](http://yurichev.com/writings/RE_for_beginners-en.pdf)
